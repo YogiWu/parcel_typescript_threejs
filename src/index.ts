@@ -2,20 +2,31 @@
 // import './style.css'
 // three.js
 import * as THREE from 'three'
+// import { OrbitControls } from 'three-orbitcontrols-ts'
+import './orbitcontrol.js'
 
 // create the scene
 let scene = new THREE.Scene()
 
 // create the camera
-let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000)
+// camera.position.set( -600, 550, 1300 )
 
-let renderer = new THREE.WebGLRenderer()
+let renderer = new THREE.WebGLRenderer( { antialias: true } );
+renderer.setPixelRatio( window.devicePixelRatio );
+renderer.gammaInput = true;
+renderer.gammaOutput = true;
 
 // set size
 renderer.setSize(window.innerWidth, window.innerHeight)
 
 // add canvas to dom
 document.body.appendChild(renderer.domElement)
+
+// CONTROLS
+console.log(THREE.OrbitControls)
+let cameraControls = new THREE.OrbitControls( camera, renderer.domElement )
+cameraControls.addEventListener( 'change', render )
 
 // add axis to the scene
 let axis = new THREE.AxisHelper(10)
@@ -65,5 +76,16 @@ function render(): void {
 	box.rotation.x += 0.1
 	renderer.render(scene, camera)
 }
+
+function onWindowResize():void {
+	var canvasWidth = window.innerWidth;
+	var canvasHeight = window.innerHeight;
+	renderer.setSize( canvasWidth, canvasHeight );
+	camera.aspect = canvasWidth / canvasHeight;
+	camera.updateProjectionMatrix();
+	render();
+}
+// EVENTS
+window.addEventListener( 'resize', onWindowResize, false );
 
 animate()
